@@ -99,3 +99,31 @@ An AI-powered customer support chatbot that provides intelligent responses based
 |  (Streamlit UI)         | <-- |   ElevenLabs API      |
 +-------------------------+     +-----------------------+
 
+# How It Works (Step-by-Step Flow)
+
+## 1️⃣ User Provides Input
+- If **text**, it is directly processed.  
+- If **voice**, it is recorded and transcribed by **Whisper AI**.  
+
+## 2️⃣ Language Detection & Translation
+- If the query is not in English, it is translated using **Google Translator**.  
+
+## 3️⃣ Query Processing & AI Response
+- The chatbot fetches relevant context from **FAISS Vector Store**.  
+- Uses **GPT-4 Turbo (LangChain)** to generate an answer.  
+
+## 4️⃣ Response Translation (If Needed)
+- If the user's preferred language is not English, the response is translated.  
+
+## 5️⃣ Output Response to the User
+- **Text response** appears in the chat window.  
+- **Audio response** (optional) is generated via **ElevenLabs API**.  
+
+## 6️⃣ Maintain Conversation History
+- The system keeps track of user queries for **context-aware interactions**.  
+
+## 7️⃣ Document Upload & Knowledge Updates
+- Users can upload **PDF/TXT/MD/HTML** files.  
+- Extracted text is stored in **FAISS Vector Store** for future queries.  
+
+
