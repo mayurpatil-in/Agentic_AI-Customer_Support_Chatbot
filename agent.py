@@ -57,3 +57,16 @@ def load_vectorstore():
     except Exception as e:
         st.error(f"Error creating vectorstore: {str(e)}")
         return None
+    
+
+    def whisper_transcribe(duration=5, samplerate=16000):
+        audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1)
+        sd.wait()
+        temp_audio_file = tempfile.mktemp(suffix=".wav")
+        write(temp_audio_file, samplerate, audio)
+
+        model = whisper.load_model("base")
+        result = model.transcribe(temp_audio_file)
+
+        os.remove(temp_audio_file)
+        return result["text"]
