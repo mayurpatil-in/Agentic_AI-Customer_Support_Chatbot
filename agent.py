@@ -37,3 +37,23 @@ def load_vectorstore():
             return vectorstore
         except Exception as e:
             st.error(f"Error loading vectorstore: {str(e)}")
+
+    try:
+        with open(DOC_FILE, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        for file_info in st.session_state.uploaded_files:
+            text += f"\n\n{file_info['content']}"
+
+        text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+        docs = text_splitter.split_text(text)
+
+        vectorstore = FAISS.from_texts(docs, embeddings)
+        vectorstore.save_local(VECTOR_STORE_PATH)
+
+        st.session_state.vectorstore = vectorstore
+        st.session_state.knowledge_updated = False
+        return vectorstore
+    except Exception as e:
+        st.error(f"Error creating vectorstore: {str(e)}")
+        return None
