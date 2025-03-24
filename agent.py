@@ -59,14 +59,27 @@ def load_vectorstore():
         return None
     
 
-    def whisper_transcribe(duration=5, samplerate=16000):
-        audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1)
-        sd.wait()
-        temp_audio_file = tempfile.mktemp(suffix=".wav")
-        write(temp_audio_file, samplerate, audio)
+def whisper_transcribe(duration=5, samplerate=16000):
+    audio = sd.rec(int(duration * samplerate), samplerate=samplerate, channels=1)
+    sd.wait()
+    temp_audio_file = tempfile.mktemp(suffix=".wav")
+    write(temp_audio_file, samplerate, audio)
 
-        model = whisper.load_model("base")
-        result = model.transcribe(temp_audio_file)
+    model = whisper.load_model("base")
+    result = model.transcribe(temp_audio_file)
 
-        os.remove(temp_audio_file)
-        return result["text"]
+    os.remove(temp_audio_file)
+    return result["text"]
+
+def elevenlabs_tts(text, lang="en", voice="Rachel"):
+    client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
+    audio = client.generate(
+        text=text,
+        voice=voice,
+        model="eleven_multilingual_v2" if lang != "en" else "eleven_monolingual_v1"
+    )
+    temp_audio_file = tempfile.mktemp(suffix=".mp3")
+    with open(temp_audio_file, "wb") as f:
+        for chunk in audio:
+            f.write(chunk)
+    return temp_audio_file
