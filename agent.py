@@ -83,3 +83,28 @@ def elevenlabs_tts(text, lang="en", voice="Rachel"):
         for chunk in audio:
             f.write(chunk)
     return temp_audio_file
+
+def extract_text_from_file(uploaded_file):
+    file_content = uploaded_file.getvalue()
+    file_extension = uploaded_file.name.split(".")[-1].lower()
+
+
+    if file_extension == "pdf":
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file_extension}") as tmp_file:
+                tmp_file.write(file_content)
+                tmp_file_path = tmp_file.name
+
+            doc = fitz.open(tmp_file_path)
+            text = "".join(page.get_text() for page in doc)
+
+            os.unlink(tmp_file_path)
+            return text
+        except Exception as e:
+            st.error(f"Error extracting text from PDF: {str(e)}")
+            return ""
+    elif file_extension in ["txt", "md", "html"]:
+        return file_content.decode("utf-8")
+    else:
+        st.warning(f"Unsupported file type: {file_extension}")
+        return ""
