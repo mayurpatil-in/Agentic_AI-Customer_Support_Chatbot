@@ -108,3 +108,29 @@ def extract_text_from_file(uploaded_file):
     else:
         st.warning(f"Unsupported file type: {file_extension}")
         return ""
+    
+def get_ai_response(query, lang="en"):
+    vectorstore = load_vectorstore()
+    if not vectorstore:
+        return "Error loading knowledge base. Please try again.", []
+
+    query_en = GoogleTranslator(source=lang, target='en').translate(query) if lang != "en" else query
+
+    try:
+        llm = ChatOpenAI(model="gpt-4-turbo", api_key=OPENAI_API_KEY)
+        qa_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm, retriever=vectorstore.as_retriever(search_kwargs={"k": 3}), return_source_documents=True
+        )
+
+        result = qa_chain({"question": query_en, "chat_history": st.session_state.conversation_history})
+
+        answer_en = result["answer"]
+        sources = [doc.page_content[:150] + "..." for doc in result.get("source_documents", [])]
+
+        answer = GoogleTranslator(source='en', target=lang).translate(answer_en) if lang != "en" else answer_en
+
+        st.session_state.conversation_history.append((query_en, answer_en))
+
+        return answer, sources
+    except Exception as e:
+        return f"Error generating response: {str(e)}", []
