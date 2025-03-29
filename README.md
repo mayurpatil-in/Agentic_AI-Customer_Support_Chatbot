@@ -98,6 +98,7 @@ An AI-powered customer support chatbot that provides intelligent responses based
 |  Display Response       |     |  Text-to-Speech (TTS) |
 |  (Streamlit UI)         | <-- |   ElevenLabs API      |
 +-------------------------+     +-----------------------+
+```
 
 
 # How It Works (Step-by-Step Flow)
