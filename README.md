@@ -2,7 +2,7 @@
 
 An AI-powered customer support chatbot that provides intelligent responses based on preloaded company documents. It supports both text and voice-based interactions, multilingual translations, and document uploads to enhance knowledge retrieval.
 
-## ✨ Features
+## ✨ Features.
 
 ✅ Answer user queries using company documents  
 ✅ Accept text and voice-based inputs  
